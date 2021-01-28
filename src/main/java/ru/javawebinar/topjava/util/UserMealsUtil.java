@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -21,41 +22,41 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
         );
 
-        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+//        List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        List<UserMealWithExcess> mealsTo = filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
 //        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
-        Map<LocalDate, Integer> calorieSum = new HashMap<>();//мапа с суммарными калориями по датам
-        List<LocalDate> excessDays = new ArrayList<>();//список дат с превышением каллорий
-        List<UserMeal> filteredList = new ArrayList<>();//отфильтрованный список UserMeal
-        List<UserMealWithExcess> result = new ArrayList<>();
+        Map<LocalDate, Integer> calorieSum = new HashMap<>();
+        List<LocalDate> excessDays = new ArrayList<>();
+        List<UserMeal> filteredList = new ArrayList<>();
 
         for (UserMeal meal : meals) {
             LocalDate date = meal.getDateTime().toLocalDate();
             int calorie = meal.getCalories();
 
-            //суммируем калории по датам
             calorieSum.computeIfPresent(date, (k, v) -> v + calorie);
             calorieSum.putIfAbsent(date, calorie);
 
-            if (calorieSum.get(date) > caloriesPerDay && !excessDays.contains(date)) {//записываем дни, в которые есть превышение калорий
+            if (calorieSum.get(date) > caloriesPerDay && !excessDays.contains(date)) {
                 excessDays.add(date);
             }
 
-            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {//фильтруем записи UserMeal
+            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime)) {
                 filteredList.add(meal);
             }
         }
 
+        List<UserMealWithExcess> result = new ArrayList<>();
+
         if (!filteredList.isEmpty()) {
-            for (UserMeal um : filteredList) {//цилк для отфильтрованного списка
-                if (excessDays.contains(um.getDateTime().toLocalDate())) {//если есть превышение калорий в этот день, то заносим в result со значением true
+            for (UserMeal um : filteredList) {
+                if (excessDays.contains(um.getDateTime().toLocalDate())) {
                     result.add(new UserMealWithExcess(um.getDateTime(), um.getDescription(), um.getCalories(), true));
-                } else {//иначе заносим в result со значением false
+                } else {
                     result.add(new UserMealWithExcess(um.getDateTime(), um.getDescription(), um.getCalories(), false));
                 }
             }
@@ -65,7 +66,14 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO Implement by streams
-        return null;
+        Map<LocalDate, Integer> calorieSum = meals.stream()
+                        .collect(Collectors.toMap(x-> x.getDateTime().toLocalDate(), UserMeal::getCalories, Integer::sum));
+
+        return meals.stream()
+                .filter(x -> x.getDateTime().toLocalTime().compareTo(startTime) >= 0 && x.getDateTime().toLocalTime().compareTo(endTime) < 0)
+                .map(x -> calorieSum.get(x.getDateTime().toLocalDate()) > caloriesPerDay
+                        ? new UserMealWithExcess(x.getDateTime(), x.getDescription(), x.getCalories(), true)
+                        : new UserMealWithExcess(x.getDateTime(), x.getDescription(), x.getCalories(), false))
+                .collect(Collectors.toList());
     }
 }
