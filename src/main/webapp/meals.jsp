@@ -1,11 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html lang="ru">
 <head>
     <title>Meals</title>
 </head>
 <body>
-    <h2>Meals page</h2>
+    <h3><a href="index.html">Home</a></h3>
+    <hr>
+    <h2>Meals</h2>
 <table border=1>
     <thead>
     <tr>
@@ -15,15 +18,10 @@
     </tr>
     </thead>
     <tbody>
-    <!--<tr>
-        <td>Date</td>
-        <td>Descript</td>
-        <td>Calories</td>
-    </tr> -->
-
-     <c:forEach items="${pageScope.mealsTo}" var="mea">
-         <tr>
-            <td><c:out value="${mea.dateTime}"/></td>
+     <jsp:useBean id="mealsTo" scope="request" type="java.util.List"/>
+     <c:forEach items="${mealsTo}" var="mea">
+         <tr style=${mea.excess ? "color:red" : "color:green"}>
+            <td><javatime:format value="${mea.dateTime}" pattern="yyyy-MM-dd HH:mm"/></td>
             <td><c:out value="${mea.description}"/></td>
             <td><c:out value="${mea.calories}"/></td>
          </tr>
