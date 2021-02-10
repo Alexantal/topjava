@@ -14,14 +14,20 @@ import java.time.LocalTime;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
+    private final int caloriesPerDay = 2000;
     private static final Logger log = getLogger(MealServlet.class);
-    MealRepository mealRepository = new MealRepository(2000);
+    private MealRepository mealRepository;
+
+    @Override
+    public void init() throws ServletException {
+        mealRepository = new MealRepository();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to meals");
         request.setAttribute("mealsTo", MealsUtil.filteredByStreams(mealRepository.getMeals(),
-                LocalTime.MIN, LocalTime.MAX, mealRepository.getCALORIES_PER_DAY()));
+                LocalTime.MIN, LocalTime.MAX, caloriesPerDay));
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
     }
 }

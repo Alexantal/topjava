@@ -9,11 +9,8 @@ import java.util.List;
 
 public class MealRepository {
     private final List<Meal> meals;
-    private final int CALORIES_PER_DAY;
 
-    public MealRepository(int caloriesPerDay) {
-        this.CALORIES_PER_DAY = caloriesPerDay;
-
+    public MealRepository() {
         meals = Arrays.asList(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
@@ -27,9 +24,5 @@ public class MealRepository {
 
     public List<Meal> getMeals() {
         return meals;
-    }
-
-    public int getCALORIES_PER_DAY() {
-        return CALORIES_PER_DAY;
     }
 }
