@@ -1,6 +1,13 @@
 package ru.javawebinar.topjava.service;
 
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -13,7 +20,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
 
+import static com.sun.org.slf4j.internal.LoggerFactory.getLogger;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -29,6 +38,17 @@ public class MealServiceTest {
 
     @Autowired
     private MealService service;
+
+    private static final Logger log = getLogger(MealServiceTest.class);
+
+    @Rule
+    public final Stopwatch STOPWATCH = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            String outStr = String.format("\n\nTest name: %s\nWork time: %d ms\n", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            log.debug(outStr);
+        }
+    };
 
     @Test
     public void delete() {
