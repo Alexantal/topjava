@@ -7,11 +7,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id =?1"),
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=?1 ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m WHERE m.dateTime >=?1 and m.dateTime <?2 and " +
+                "m.user.id=?3 ORDER BY m.dateTime DESC")
+})
+
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = "date_time", name = "meals_unique_user_datetime_idx")})
 public class Meal extends AbstractBaseEntity {
+
+    public static final String DELETE = "Meal.delete";
+    public static final String BETWEEN_HALF_OPEN = "Meal.betWeenHalfOpen";
+    public static final String ALL_SORTED = "Meal.getAllSorted";
+
     @Column(name = "date_time", nullable = false, unique = true)
-    @NotBlank
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
