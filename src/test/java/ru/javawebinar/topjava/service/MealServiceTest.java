@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Stopwatch;
@@ -18,6 +19,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
@@ -38,14 +41,23 @@ public class MealServiceTest {
 
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
 
+    private static final Map<String, Long> comLog = new HashMap<>();
+
     @Rule
     public final Stopwatch stopWatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            String outStr = String.format("\n\nTest name: %s\nWork time: %d ms\n", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            long runTime = TimeUnit.NANOSECONDS.toMillis(nanos);
+            String outStr = String.format("\nRuntime: %d ms\n", runTime);
             log.debug(outStr);
+            comLog.put(description.getMethodName(), runTime);
         }
     };
+
+    @AfterClass
+    public static void after() {
+        comLog.forEach((a, b) -> log.debug(a + " - " + b + " ms"));
+    }
 
     @Test
     public void delete() {
