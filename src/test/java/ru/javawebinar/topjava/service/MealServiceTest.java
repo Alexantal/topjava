@@ -56,7 +56,9 @@ public class MealServiceTest {
 
     @AfterClass
     public static void after() {
-        comLog.forEach((a, b) -> log.debug(a + " - " + b + " ms"));
+        StringBuilder result = new StringBuilder();
+        comLog.forEach((a, b) -> result.append(String.format("\n%-25s %10d ms", a, b)));
+        log.debug(result.toString());
     }
 
     @Test
