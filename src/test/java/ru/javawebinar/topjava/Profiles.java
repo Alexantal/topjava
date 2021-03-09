@@ -31,7 +31,7 @@ public class Profiles {
     public static class ActiveDbProfileResolver implements ActiveProfilesResolver {
         @Override
         public @NonNull String[] resolve(@NonNull Class<?> aClass) {
-            return new String[]{REPOSITORY_IMPLEMENTATION, getActiveDbProfile()};
+            return new String[]{getActiveDbProfile()};
         }
     }
 }
