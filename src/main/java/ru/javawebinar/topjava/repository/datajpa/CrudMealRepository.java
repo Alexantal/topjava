@@ -24,6 +24,8 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
     List<Meal> findAllByUser(User user, Sort sort);
 
-    List<Meal> findAllByUserAndDateTimeGreaterThanEqualAndDateTimeLessThan(User user, LocalDateTime startDateTime,
-                                                                           LocalDateTime endDateTime, Sort sort);
+    @Query("SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime >= :startDateTime " +
+            "AND m.dateTime < :endDateTime ORDER BY m.dateTime DESC")
+    List<Meal> findAllBetweenHalfOpen(@Param("userId") int userId, @Param("startDateTime") LocalDateTime startDateTime,
+                                      @Param("endDateTime") LocalDateTime endDateTime);
 }

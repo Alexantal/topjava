@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        if (!meal.isNew() && get(meal.id(), userId) != null || meal.isNew()) {
+        if (meal.isNew() || get(meal.id(), userId) != null) {
             meal.setUser(crudUserRepository.getOne(userId));
             return crudMealRepository.save(meal);
         } else {
@@ -47,7 +48,6 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return crudMealRepository.findAllByUserAndDateTimeGreaterThanEqualAndDateTimeLessThan(crudUserRepository.getOne(userId),
-                startDateTime, endDateTime, SORT_DATETIME);
+        return crudMealRepository.findAllBetweenHalfOpen(userId, startDateTime, endDateTime);
     }
 }
