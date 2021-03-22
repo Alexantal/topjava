@@ -4,26 +4,13 @@
 
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
-<head>
-    <title>Meal</title>
-</head>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
     <hr>
-<%--    <h2><spring:message code="mealForm.create"/></h2>--%>
-    <h2>
-        <c:set var="action" scope="session" value="${param.action}"/>
-        <c:choose>
-            <c:when test="${action=='create'}">
-                <spring:message code="mealForm.create"/>
-            </c:when>
-            <c:otherwise>
-                <spring:message code="mealForm.edit"/>
-            </c:otherwise>
-        </c:choose></h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
+    <h2><spring:message code="${meal.isNew() ? 'mealForm.create' : 'mealForm.edit'}"/></h2>
     <form method="post" action="create">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
