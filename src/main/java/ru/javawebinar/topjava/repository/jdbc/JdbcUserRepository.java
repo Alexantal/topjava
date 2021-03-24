@@ -9,10 +9,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @Transactional(readOnly = true)
@@ -75,5 +77,41 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public List<User> getAll() {
         return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+    }
+
+    @Transactional
+    public User createRole(Role role, User user) {
+        Set<Role> roles = user.getRoles();
+        if (!roles.contains(role)) {
+            roles.add(role);
+            user.setRoles(roles);
+            jdbcTemplate.update("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", user.getId(), role);
+            return user;
+        }
+        return null;
+    }
+
+    @Transactional
+    public User updateRole(Role curRole, Role newRole, User user) {
+        Set<Role> roles = user.getRoles();
+        if (!roles.contains(newRole)) {
+            roles.remove(curRole);
+            roles.add(newRole);
+            user.setRoles(roles);
+            jdbcTemplate.update("UPDATE user_roles SET role=? WHERE user_id=? AND role=?", newRole, user.getId(), curRole);
+        }
+        return null;
+    }
+
+    @Transactional
+    public boolean deleteRole(Role role, User user) {
+        Set<Role> roles = user.getRoles();
+        if (roles.contains(role) && roles.size() > 1) {
+            roles.remove(role);
+            user.setRoles(roles);
+            jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=? AND role=?", user.getId(), role);
+            return true;
+        }
+        return false;
     }
 }
