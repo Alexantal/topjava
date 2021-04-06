@@ -52,6 +52,10 @@ function save() {
     });
 }
 
+function filter() {
+
+}
+
 let failedNote;
 
 function closeNoty() {
