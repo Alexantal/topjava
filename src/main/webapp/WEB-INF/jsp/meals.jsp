@@ -12,7 +12,7 @@
 <div class="jumbotron pt-4">
     <div class="container">
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
-        <form method="get" action="profiles/meals/filter">
+        <form id="filterForm">
             <div class="col-md-6 mb-3">
                 <label><spring:message code="meal.startDate"/>:</label>
                 <input type="date" name="startDate" value="${param.startDate}">
@@ -100,7 +100,7 @@
             </div>
         </div>
     </div>
-
+</div>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

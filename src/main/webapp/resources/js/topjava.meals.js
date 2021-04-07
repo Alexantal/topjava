@@ -1,8 +1,8 @@
-const userAjaxUrl = "profiles/meals/";
+const mealAjaxUrl = "profile/meals";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
-    ajaxUrl: userAjaxUrl
+    ajaxUrl: mealAjaxUrl
 };
 
 // $(document).ready(function () {
@@ -34,9 +34,20 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
     );
 });
+
+function filter() {
+    const form = $("#filterForm");
+    $.ajax({
+        type: "GET",
+        url: /*ctx.ajaxUrl + */"profile/meals/filter",
+        data: form.serialize()
+    }).done(function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
