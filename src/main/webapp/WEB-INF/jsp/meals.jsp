@@ -29,7 +29,7 @@
                 <label><spring:message code="meal.endTime"/>:</label>
                 <input type="time" name="endTime" value="${param.endTime}">
             </div>
-            <button class="btn btn-primary" onclick="filter()">
+            <button type="button" class="btn btn-primary" onclick="filter()">
                 <spring:message code="meal.filter"/>
             </button>
         </form>

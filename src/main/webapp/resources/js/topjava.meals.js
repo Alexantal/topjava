@@ -45,7 +45,7 @@ function filter() {
     const form = $("#filterForm");
     $.ajax({
         type: "GET",
-        url: /*ctx.ajaxUrl + */"profile/meals/filter",
+        url: ctx.ajaxUrl + "/filter",
         data: form.serialize()
     }).done(function (data) {
         ctx.datatableApi.clear().rows.add(data).draw();
